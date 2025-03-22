@@ -6,6 +6,7 @@ const { forgotPassword, resetPassword } = require('../controllers/passwordContro
 // Auth routes
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.get('/:id', authController.getUserDetails); // Fetch user details by ID
 
 // Password routes
 router.post('/forgot-password', forgotPassword);
