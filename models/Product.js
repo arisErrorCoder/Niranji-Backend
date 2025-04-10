@@ -9,12 +9,8 @@ const productSchema = new mongoose.Schema({
   tags: [String],
   rating: Number,
   reviews: Number,
-  deliveryInfo: {
-    locations: [{ region: String, time: String }],
-    freeShippingThreshold: Number,
-    codCharges: Number,
-  },
   nutrients: [String],
+  description: [String],
   pricePerSize: [
     {
       size: String,

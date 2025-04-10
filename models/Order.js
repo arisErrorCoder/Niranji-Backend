@@ -7,6 +7,11 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'niranjiUser',
+      required: true
+    },
     paymentId: {
       type: String,
       required: true,
@@ -33,7 +38,10 @@ const OrderSchema = new mongoose.Schema(
     },
     cart: [
       {
-        productId: String,
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'NiranjiProduct'
+        },
         name: String,
         quantity: Number,
         price: Number,
@@ -52,4 +60,4 @@ const OrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model("nirajiOrder", OrderSchema);

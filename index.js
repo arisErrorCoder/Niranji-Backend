@@ -21,9 +21,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.post("/api/payment", paymentController.createOrder);
 app.post("/api/payment/verify", paymentController.verifyPayment);
+app.get('/api/order/user/:userId', paymentController.getOrdersByUserId);
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, })
+  serverSelectionTimeoutMS: 5000, // 5 seconds timeout
+  socketTimeoutMS: 45000, // 45 seconds socket timeout
+})
   .then(() => app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`)))
   .catch((err) => console.log(err));
