@@ -22,7 +22,14 @@ app.use('/api/cart', cartRoutes);
 app.post("/api/payment", paymentController.createOrder);
 app.post("/api/payment/verify", paymentController.verifyPayment);
 app.get('/api/order/user/:userId', paymentController.getOrdersByUserId);
+const productReviewsRouter = require('./routes/productReviews');
+const reviewsRouter = require('./routes/productReviews');
+const reviewActionsRouter = require('./routes/reviewActions');
 
+// Mount routes
+app.use('/products/:productId/reviews', productReviewsRouter);
+app.use('/reviews', reviewsRouter);
+app.use('/review-actions', reviewActionsRouter);
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000, // 5 seconds timeout

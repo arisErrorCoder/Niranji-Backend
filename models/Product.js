@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema({
   reviews: Number,
   nutrients: [String],
   description: [String],
+  howtouse: [String],
   pricePerSize: [
     {
       size: String,
@@ -29,7 +30,31 @@ const productSchema = new mongoose.Schema({
     expiry: String,
   },
 });
+// Add this to your Product model
+productSchema.statics.updateProductRating = async function(productId) {
+  const stats = await this.model('Review').aggregate([
+    { $match: { product: productId } },
+    {
+      $group: {
+        _id: '$product',
+        averageRating: { $avg: '$rating' },
+        reviewCount: { $sum: 1 }
+      }
+    }
+  ]);
 
+  if (stats.length > 0) {
+    await this.findByIdAndUpdate(productId, {
+      rating: parseFloat(stats[0].averageRating.toFixed(1)),
+      reviews: stats[0].reviewCount
+    });
+  } else {
+    await this.findByIdAndUpdate(productId, {
+      rating: 0,
+      reviews: 0
+    });
+  }
+};
 const Product = mongoose.model("NiranjiProduct", productSchema);
 
 module.exports = Product;

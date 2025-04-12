@@ -23,7 +23,7 @@ exports.addProduct = async (req, res) => {
       const imagePaths = req.files.map(file => file.filename); // Extract filenames correctly
 
       // Parse pricePerSize, nutrients, and benefits if they are strings
-      let { pricePerSize, tags,nutrients, description, benefits,storageInfo } = req.body;
+      let { pricePerSize, tags,nutrients, description, benefits,howtouse,storageInfo } = req.body;
 
       try {
         if (typeof pricePerSize === "string") {
@@ -44,6 +44,9 @@ exports.addProduct = async (req, res) => {
         if (typeof description === "string") {
           description = JSON.parse(description);
         }
+        if (typeof howtouse === "string") {
+          howtouse = JSON.parse(howtouse);
+        }
       } catch (error) {
         return res.status(400).json({ message: "Invalid JSON format in request body", error });
       }
@@ -55,6 +58,7 @@ exports.addProduct = async (req, res) => {
         nutrients,     // Save parsed nutrients
         benefits,
         description,
+        howtouse,
         storageInfo,      // Save parsed benefits
         images: imagePaths // Save image paths
       });
