@@ -93,3 +93,60 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ message: "Error fetching products", error });
   }
 };
+
+// Edit/Update a product by ID
+exports.editProduct = async (req, res) => {
+  try {
+    upload(req, res, async (err) => {
+      if (err) return res.status(400).json({ message: "Image upload failed", err });
+
+      const { id } = req.params;
+      let updateData = { ...req.body };
+      
+      // Handle image updates
+      if (req.files && req.files.length > 0) {
+        const imagePaths = req.files.map(file => file.filename);
+        updateData.images = imagePaths;
+        
+        // Optionally: Delete old images from server here
+      }
+
+      // Parse JSON fields if they are strings
+      const jsonFields = ['pricePerSize', 'tags', 'nutrients', 'benefits', 'description', 'howtouse', 'storageInfo'];
+      
+      jsonFields.forEach(field => {
+        if (updateData[field] && typeof updateData[field] === 'string') {
+          try {
+            updateData[field] = JSON.parse(updateData[field]);
+          } catch (error) {
+            return res.status(400).json({ 
+              message: `Invalid JSON format in ${field}`,
+              error 
+            });
+          }
+        }
+      });
+
+      // Find and update the product
+      const updatedProduct = await Product.findByIdAndUpdate(
+        id,
+        updateData,
+        { new: true, runValidators: true } // Return updated document and run validators
+      );
+
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      res.status(200).json({ 
+        message: "Product updated successfully", 
+        product: updatedProduct 
+      });
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error updating product", 
+      error: error.message 
+    });
+  }
+};
